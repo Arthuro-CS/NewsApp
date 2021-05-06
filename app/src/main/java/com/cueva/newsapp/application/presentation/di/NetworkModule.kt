@@ -10,6 +10,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
 private const val BASE_URL = "https://hn.algolia.com/api/v1/"
+
 @Module
 class NetworkModule {
 

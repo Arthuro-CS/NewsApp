@@ -8,11 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cueva.newsapp.databinding.NewsItemBinding
 import com.cueva.newsapp.domain.entity.News
 
-class NewsAdapter : ListAdapter<News,NewsAdapter.NewsViewHolder>(NewsDiffCallback()){
+class NewsAdapter : ListAdapter<News, NewsAdapter.NewsViewHolder>(NewsDiffCallback()) {
 
-    class NewsViewHolder(private var binding: NewsItemBinding) : RecyclerView.ViewHolder(binding.root){
+    class NewsViewHolder(private var binding: NewsItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(news: News){
+        fun bind(news: News) {
             binding.news = news
         }
     }
@@ -27,7 +28,7 @@ class NewsAdapter : ListAdapter<News,NewsAdapter.NewsViewHolder>(NewsDiffCallbac
 }
 
 
-class NewsDiffCallback : DiffUtil.ItemCallback<News>(){
+class NewsDiffCallback : DiffUtil.ItemCallback<News>() {
     override fun areItemsTheSame(oldItem: News, newItem: News): Boolean {
         return oldItem == newItem
     }
