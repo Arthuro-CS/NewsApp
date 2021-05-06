@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">NewsApp</string>
+    <string name="author_date">%s - %s</string>
+</resources>
