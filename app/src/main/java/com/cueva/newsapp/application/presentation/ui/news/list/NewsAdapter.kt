@@ -8,7 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cueva.newsapp.databinding.NewsItemBinding
 import com.cueva.newsapp.domain.entity.News
 
-class NewsAdapter : ListAdapter<News, NewsAdapter.NewsViewHolder>(NewsDiffCallback()) {
+class NewsAdapter(private val onClickListener: OnClickListener) :
+    ListAdapter<News, NewsAdapter.NewsViewHolder>(NewsDiffCallback()) {
 
     class NewsViewHolder(private var binding: NewsItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -23,7 +24,15 @@ class NewsAdapter : ListAdapter<News, NewsAdapter.NewsViewHolder>(NewsDiffCallba
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val news = getItem(position)
+        holder.bind(news)
+        holder.itemView.setOnClickListener {
+            onClickListener.onClick(news.storyUrl)
+        }
+    }
+
+    class OnClickListener(val clickListener: (url: String) -> Unit) {
+        fun onClick(url: String) = clickListener(url)
     }
 }
 

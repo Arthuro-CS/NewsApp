@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.cueva.newsapp.R
 import com.cueva.newsapp.application.presentation.di.DaggerNewsComponent
@@ -36,7 +38,9 @@ class NewsListFragment : Fragment() {
         DaggerNewsComponent.builder().roomModule(RoomModule(requireActivity().application))
             .build().inject(this)
 
-        val adapter = NewsAdapter()
+        val adapter = NewsAdapter(NewsAdapter.OnClickListener { url ->
+            navigateToDetail(url)
+        })
         binding.rvLeagueList.adapter = adapter
 
 
@@ -57,6 +61,16 @@ class NewsListFragment : Fragment() {
 
         binding.setLifecycleOwner(this)
         return binding.root
+    }
+
+    private fun navigateToDetail(url: String) {
+        if (!isOnline(requireContext())) {
+            Toast.makeText(requireContext(), "INTERNET CONNECTION REQUIRED", Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
+        val action = NewsListFragmentDirections.actionNewsListFragmentToNewsDetailFragment(url)
+        findNavController().navigate(action)
     }
 
     fun loadNews(isOnline: Boolean) {
