@@ -7,7 +7,7 @@ import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [NewsRepositoryModule::class, DataSourceModule::class, NetworkModule::class, RoomModule::class])
+@Component(modules = [SharedPreferencesModule::class, NewsRepositoryModule::class, DataSourceModule::class, NetworkModule::class, RoomModule::class])
 interface NewsComponent {
     fun inject(newsListFragment: NewsListFragment)
 }

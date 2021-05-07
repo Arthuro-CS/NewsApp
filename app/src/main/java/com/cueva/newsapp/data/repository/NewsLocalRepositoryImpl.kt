@@ -18,4 +18,12 @@ class NewsLocalRepositoryImpl @Inject constructor(private val localDataSource: L
     override suspend fun clearAllNews() {
         localDataSource.clearAllNews()
     }
+
+    override suspend fun getDeletedNews(): List<String> {
+        return localDataSource.getDeletedNews()
+    }
+
+    override suspend fun deleteNews(idNews: String) {
+        localDataSource.deleteNews(idNews)
+    }
 }

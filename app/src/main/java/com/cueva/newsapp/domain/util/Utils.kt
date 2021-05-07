@@ -8,8 +8,13 @@ import java.util.*
 class Utils {
     companion object {
 
-        fun getNewsFormatted(news: List<News>): List<News> {
-            return news
+        fun getNewsFormatted(news: List<News>,listId: List<String>): List<News> {
+
+            val mutableListNews = mutableListOf<News>()
+            mutableListNews.addAll(news)
+            mutableListNews
+                .removeAll { it.storyId in listId }
+            return mutableListNews
                 .sortedBy { Utils.getDiff(it.createAt) }
                 .map {
                     it.createAt = Utils.formatDate(it.createAt)
