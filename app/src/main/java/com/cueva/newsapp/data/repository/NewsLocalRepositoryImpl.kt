@@ -3,6 +3,8 @@ package com.cueva.newsapp.data.repository
 import com.cueva.newsapp.data.abstraction.LocalDataSource
 import com.cueva.newsapp.domain.abstraction.NewsLocalRepository
 import com.cueva.newsapp.domain.entity.News
+import com.cueva.newsapp.domain.entity.ResultNews
+import java.lang.Exception
 import javax.inject.Inject
 
 class NewsLocalRepositoryImpl @Inject constructor(private val localDataSource: LocalDataSource) :
@@ -11,7 +13,7 @@ class NewsLocalRepositoryImpl @Inject constructor(private val localDataSource: L
         return localDataSource.insertAllNews(news)
     }
 
-    override suspend fun getAllNews(): List<News> {
+    override suspend fun getAllNews(): ResultNews<List<News>, Exception> {
         return localDataSource.getAllNews()
     }
 

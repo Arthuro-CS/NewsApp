@@ -6,7 +6,9 @@ import javax.inject.Inject
 
 class InsertLocalNewsUseCase @Inject constructor(private val newsLocalRepository: NewsLocalRepository) {
 
-    suspend fun insertAllNews(news: List<News>) {
-        return newsLocalRepository.insertAllNews(news)
+    suspend fun insertAllNews(news: List<News>?) {
+        news?.let {
+            newsLocalRepository.insertAllNews(it)
+        }
     }
 }

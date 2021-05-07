@@ -1,25 +1,36 @@
 package com.cueva.newsapp.domain.util
 
 import com.cueva.newsapp.domain.entity.News
+import com.cueva.newsapp.domain.entity.ResultNews
+import com.cueva.newsapp.domain.entity.Success
 import java.lang.Exception
+import java.lang.Math.abs
 import java.text.SimpleDateFormat
 import java.util.*
 
 class Utils {
     companion object {
 
-        fun getNewsFormatted(news: List<News>,listId: List<String>): List<News> {
+        fun getNewsFormatted(
+            news: ResultNews<List<News>, Exception>,
+            listId: List<String>
+        ): ResultNews<List<News>, Exception> {
 
-            val mutableListNews = mutableListOf<News>()
-            mutableListNews.addAll(news)
-            mutableListNews
-                .removeAll { it.storyId in listId }
-            return mutableListNews
-                .sortedBy { Utils.getDiff(it.createAt) }
-                .map {
-                    it.createAt = Utils.formatDate(it.createAt)
-                    it
-                }
+            if (news is Success) {
+                val mutableListNews = mutableListOf<News>()
+                mutableListNews.addAll(news.value)
+                mutableListNews
+                    .removeAll { it.storyId in listId }
+                return Success(mutableListNews
+                    .sortedBy { Utils.getDiff(it.createAt) }
+                    .map {
+                        it.createAt = Utils.formatDate(it.createAt)
+                        it
+                    })
+            } else
+                return news
+
+
         }
 
         private fun getDiff(dateTime: String): Long {
@@ -27,7 +38,7 @@ class Utils {
             try {
                 val inputDate = format.parse(dateTime)
                 val currentDate = Date()
-                return inputDate.time - currentDate.time
+                return abs(inputDate.time - currentDate.time)
             } catch (e: Exception) {
                 e.printStackTrace()
                 return 0
@@ -44,20 +55,19 @@ class Utils {
                 val hours = minutes / 60
                 val days = hours / 24
 
-                return getTextFormatted(seconds, minutes, hours, days)
+                return getTextFormatted(minutes, hours, days)
             }
 
             return ""
         }
 
         private fun getTextFormatted(
-            seconds: Long,
             minutes: Long,
             hours: Long,
             days: Long
         ): String {
             val textFormatted: String
-            if (days > 1)
+            if (days >= 1)
                 textFormatted = "" + days + " ago"
             else {
                 if (hours >= 1)
