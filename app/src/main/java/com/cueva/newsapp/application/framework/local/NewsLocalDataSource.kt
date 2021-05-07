@@ -3,7 +3,11 @@ package com.cueva.newsapp.application.framework.local
 import com.cueva.newsapp.application.framework.NewsSharedPreferences
 import com.cueva.newsapp.application.framework.entity.NewsEntity
 import com.cueva.newsapp.data.abstraction.LocalDataSource
+import com.cueva.newsapp.domain.entity.Failure
 import com.cueva.newsapp.domain.entity.News
+import com.cueva.newsapp.domain.entity.ResultNews
+import com.cueva.newsapp.domain.entity.Success
+import java.lang.Exception
 import javax.inject.Inject
 
 class NewsLocalDataSource @Inject constructor(
@@ -16,9 +20,13 @@ class NewsLocalDataSource @Inject constructor(
         })
     }
 
-    override suspend fun getAllNews(): List<News> {
-        return newsDao.getAllNewsModel().map {
-            it.toNews()
+    override suspend fun getAllNews(): ResultNews<List<News>, Exception> {
+        try {
+            return Success(newsDao.getAllNewsModel().map {
+                it.toNews()
+            })
+        } catch (e: Exception) {
+            return Failure(e)
         }
     }
 

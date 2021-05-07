@@ -5,12 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cueva.newsapp.domain.entity.News
+import com.cueva.newsapp.domain.entity.ResultNews
+import com.cueva.newsapp.domain.entity.Success
 import com.cueva.newsapp.domain.usecase.DeleteNewsUseCase
 import com.cueva.newsapp.domain.usecase.GetLocalNewsUseCase
 import com.cueva.newsapp.domain.usecase.GetNewsUseCase
-import com.cueva.newsapp.domain.usecase.InsertLocalNewsUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import javax.inject.Inject
 
 class NewsViewModel @Inject constructor(
@@ -19,8 +21,8 @@ class NewsViewModel @Inject constructor(
     val deleteNewsUseCase: DeleteNewsUseCase
 ) : ViewModel() {
 
-    private var _newsList = MutableLiveData<MutableList<News>>()
-    val newsList: LiveData<MutableList<News>> get() = _newsList
+    private var _newsList = MutableLiveData<ResultNews<List<News>, Exception>>()
+    val newsList: LiveData<ResultNews<List<News>, Exception>> get() = _newsList
 
     fun getNewsList(hasInternet: Boolean) {
         if (hasInternet)
@@ -30,22 +32,32 @@ class NewsViewModel @Inject constructor(
     }
 
     fun deleteNews(position: Int) {
-        newsList.value?.remove(newsList.value?.get(position))
+        val result =
+            newsList.value
+        result?.let {
+            if (it is Success) {
+                val mutableList = it.value.toMutableList()
+                mutableList.remove(it.value.get(position))
+                _newsList.postValue(Success(mutableList))
+            }
+        }
         viewModelScope.launch {
-            deleteNewsUseCase.deleteNews(newsList.value?.get(position)?.storyId ?: "")
+            val result =
+                newsList.value
+            if (result is Success)
+                deleteNewsUseCase.deleteNews(result.value.get(position)?.storyId ?: "")
         }
     }
 
     private fun getNews() {
         viewModelScope.launch(Dispatchers.IO) {
-            val news = getNewsUseCase.getNews()
-            _newsList.postValue(news.toMutableList())
+            _newsList.postValue(getNewsUseCase.getNews())
         }
     }
 
     private fun getFromLocal() {
         viewModelScope.launch(Dispatchers.IO) {
-            _newsList.postValue(getLocalNewsUseCase.getAllNews().toMutableList())
+            _newsList.postValue(getLocalNewsUseCase.getAllNews())
         }
     }
 }

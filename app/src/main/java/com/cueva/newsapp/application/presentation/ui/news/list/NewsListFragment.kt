@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Adapter
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
@@ -19,6 +18,7 @@ import com.cueva.newsapp.application.presentation.di.DaggerNewsComponent
 import com.cueva.newsapp.application.presentation.di.RoomModule
 import com.cueva.newsapp.application.presentation.di.SharedPreferencesModule
 import com.cueva.newsapp.databinding.FragmentNewsListBinding
+import com.cueva.newsapp.domain.entity.Success
 import javax.inject.Inject
 
 
@@ -58,9 +58,19 @@ class NewsListFragment : Fragment() {
 
         newsViewModel.newsList.observe(viewLifecycleOwner) {
             it?.let {
-                binding.progressBarList.visibility = ProgressBar.GONE
-                binding.rvNewsList.visibility = RecyclerView.VISIBLE
-                adapter.submitList(it)
+                if (it is Success) {
+                    binding.progressBarList.visibility = ProgressBar.GONE
+                    binding.rvNewsList.visibility = RecyclerView.VISIBLE
+                    adapter.submitList(it.value)
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "AN ERROR OCCURRED WHILE LOADING NEWS",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
+
             }
         }
 
